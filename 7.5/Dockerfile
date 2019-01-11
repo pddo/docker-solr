@@ -16,4 +16,5 @@ USER solr
 # Custom docker-entrypoint.sh
 COPY ./scripts/docker-entrypoint.sh /opt/docker-solr/scripts/docker-entrypoint.sh
 
+COPY jetty_config/jetty.xml /opt/solr/server/etc/
 
