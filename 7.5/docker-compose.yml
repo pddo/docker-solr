@@ -1,0 +1,42 @@
+version: '3.3'
+
+# Before start service, must upload solr.xml to zookeeper
+# docker run --rm -ti --network=host solr:7.5 \
+#   bin/solr zk cp file:/opt/solr/server/solr/solr.xml zk:/solr.xml -z localhost:2181
+services:
+  zoo1:
+    image: "zookeeper:3.4.11"
+    hostname: zoo1
+    ports:
+      - "2181:2181"
+    volumes:
+      - zoo1_data:/data
+      - zoo1_datalog:/datalog
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888
+
+  solr1:
+    image: pddo/solr:7.5
+    hostname: solr1
+    ports:
+      - "8981:8983"
+    volumes:
+      - solr1data:/opt/solr/server/solr
+    command:
+      - "solr-foreground"
+      - "-z"
+      - "zoo1:2181"
+      - "-h"
+      - "solr1"
+    #   - "-m"
+    #   - "1024m"
+    # networks:
+    #   solr-network:
+    #     aliases:
+    #       - solr1
+
+volumes:
+  zoo1_data:
+  zoo1_datalog:
+  solr1data:
